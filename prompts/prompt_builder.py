@@ -21,8 +21,7 @@ def build_prompts():
     # B. Build structured clinic details
     clinic_details_md = f"""## 2. Clinic Details
 **Name:** {data['clinic_name']}
-**Address:** {data['clinic_address']}  
-**Phone:** {data['clinic_phone']}
+**Address:** {data['clinic_address']}
 ---
 
 ### 🕒 Clinic Days and Hours

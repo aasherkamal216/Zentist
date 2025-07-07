@@ -1,11 +1,11 @@
-from .context import AssistantContext
-from prompts.prompt_builder import build_prompts
+from prompts import build_prompts
 from tools.calendar_tools import (
     find_free_slots,
     create_appointment
 )
 from tools.email_tools import send_booking_confirmation
 from core.config import get_settings
+from .context import AssistantContext
 
 from agents import Agent, set_tracing_disabled
 from agents.extensions.models.litellm_model import LitellmModel
