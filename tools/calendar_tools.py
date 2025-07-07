@@ -8,6 +8,7 @@ from datetime import datetime, time, timedelta
 from typing import List, Dict, Optional, Any
 
 from sqlmodel import Session, select
+from api.models.appointment import Appointment
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -235,3 +236,90 @@ async def create_appointment(
     except Exception as e:
         return {"status": "error", "message": f"Failed to create appointment: {str(e)}"}
 
+
+@function_tool
+def find_upcoming_appointments(context_wrapper: RunContextWrapper[AssistantContext]) -> str:
+    """
+    Finds all future appointments for the currently logged-in user from the database.
+    Returns a JSON string list of appointments of the user.
+    """
+    db = context_wrapper.context.db
+    patient_supabase_id = context_wrapper.context.user.id
+
+    now_utc = datetime.now(pytz.utc)
+    statement = (
+        select(Appointment)
+        .where(Appointment.patient_supabase_id == patient_supabase_id)
+        .where(Appointment.start_time > now_utc)
+        .order_by(Appointment.start_time.asc())
+    )
+    appointments = db.exec(statement).all()
+
+    if not appointments:
+        return json.dumps({"status": "success", "data": [], "message": "No upcoming appointments found for this user."})
+
+    # Format the output
+    formatted_appointments = []
+
+    for app in appointments:
+        start_local = app.start_time.astimezone(pytz.timezone('America/New_York'))
+        formatted_appointments.append({
+            "appointment_id": app.id,
+            "appointment_details": f"{app.service} on {start_local.strftime('%A, %B %d at %I:%M %p')} with {app.doctor_name} ({app.doctor_email})",
+            "patient_details": f"Name: {app.patient_name}. Email: {app.patient_email}.",
+        })
+    
+    return json.dumps({"status": "success", "data": formatted_appointments})
+
+
+@function_tool
+def cancel_appointment(
+    context_wrapper: RunContextWrapper[AssistantContext],
+    appointment_id: int,
+    doctor_email: str,
+) -> str:
+    """
+    Cancels a user's appointment by its ID.
+    This function removes the event from both Google Calendar and the internal database.
+
+    Args:
+        appointment_id (int): The unique identifier of the appointment to cancel.
+        doctor_email (str): The email address of the doctor associated with the appointment.
+
+    Returns:
+        A JSON string indicating whether the cancellation was successful or if an error occurred.
+    """
+    db = context_wrapper.context.db
+    patient_supabase_id = context_wrapper.context.user.id
+
+    # Securely find the appointment
+    statement = (
+        select(Appointment)
+        .where(Appointment.id == appointment_id)
+        .where(Appointment.patient_supabase_id == patient_supabase_id)
+    )
+    appointment = db.exec(statement).one_or_none()
+
+    if not appointment:
+        return json.dumps({"status": "error", "message": "Appointment not found or you do not have permission to cancel it."})
+
+    # 1. Delete from Google Calendar
+    try:
+        service = get_google_service(doctor_email, config['general_config']['google_api_scopes_calendar'])
+        service.events().delete(
+            calendarId=appointment.doctor_email,
+            eventId=appointment.google_calendar_event_id
+        ).execute()
+    except Exception as e:
+        # If the event is already deleted from calendar, we can proceed. Otherwise, it's an error.
+        print(f"Could not delete Google Calendar event (it may already be gone): {e}")
+
+    # 2. Delete from our database
+    try:
+        db.delete(appointment)
+        db.commit()
+        return json.dumps({"status": "success", "message": "Appointment successfully canceled from both calendar and database."})
+    except Exception as e:
+        db.rollback()
+        print(f"Failed to delete appointment {appointment_id} from database: {e}")
+        return json.dumps({"status": "error", "message": "Failed to cancel appointment due to a database error."})
