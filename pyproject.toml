@@ -15,6 +15,8 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "python-jose[cryptography]>=3.5.0",
     "pytz>=2025.2",
+    "redis>=6.2.0",
     "sendgrid>=6.12.4",
     "sqlmodel>=0.0.24",
+    "supabase>=2.16.0",
 ]
