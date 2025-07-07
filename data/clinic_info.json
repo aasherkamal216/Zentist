@@ -1,0 +1,40 @@
+{
+  "clinic_name": "Bright Smiles Dental Clinic",
+  "clinic_address": "216 Dental Way, Tooth-Town, USA",
+  "clinic_phone": "1-800-DENTIST",
+  "clinic_hours": {
+    "Monday": "9:00 AM - 5:00 PM",
+    "Tuesday": "9:00 AM - 5:00 PM",
+    "Wednesday": "10:00 AM - 7:00 PM",
+    "Thursday": "9:00 AM - 5:00 PM",
+    "Friday": "9:00 AM - 3:00 PM",
+    "Saturday": "Closed",
+    "Sunday": "Closed"
+  },
+  "doctors": [
+    {
+      "name": "Dr. Emily Carter",
+      "email": "dr.carter@brightsmiles.com",
+      "specialty": "General & Cosmetic Dentistry",
+      "calendar_id": "dr_carter_calendar"
+    },
+    {
+      "name": "Dr. Ben Adams",
+      "email": "dr.adams@brightsmiles.com",
+      "specialty": "Orthodontics",
+      "calendar_id": "dr_adams_calendar"
+    }
+  ],
+  "services": {
+    "Routine Check-ups & Cleanings": 30,
+    "Fillings and Restorations": 45,
+    "Teeth Whitening": 60,
+    "Dental Implants": 90,
+    "Orthodontic Braces": 60,
+    "Root Canal Therapy": 90
+},
+  "general_config": {
+    "default_timezone": "America/New_York",
+    "google_api_scopes_calendar": ["https://www.googleapis.com/auth/calendar"]
+  }
+}
