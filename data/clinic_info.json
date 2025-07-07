@@ -16,13 +16,15 @@
       "name": "Dr. Emily Carter",
       "email": "dr.carter@brightsmiles.com",
       "specialty": "General & Cosmetic Dentistry",
-      "calendar_id": "dr_carter_calendar"
+      "calendar_id": "dr_carter_calendar",
+      "google_credentials_env_var": "DR_EMILY_CREDS"
     },
     {
       "name": "Dr. Ben Adams",
       "email": "dr.adams@brightsmiles.com",
       "specialty": "Orthodontics",
-      "calendar_id": "dr_adams_calendar"
+      "calendar_id": "dr_adams_calendar",
+      "google_credentials_env_var": "DR_BEN_CREDS"
     }
   ],
   "services": {
