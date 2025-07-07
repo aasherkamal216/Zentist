@@ -26,5 +26,6 @@ receptionist_agent = Agent[AssistantContext](
         handoff(
             agent=canceling_agent, input_filter=handoff_filters.remove_all_tools
         )
-    ]
+    ],
+    handoff_description="This agent specializes in general questions-answering about our clinic."
 )

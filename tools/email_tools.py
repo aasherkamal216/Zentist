@@ -142,7 +142,6 @@ async def send_cancellation_email(
     Args:
         patient_name (str): Full name of the patient.
         patient_email (str): Email address of the patient.
-        clinic_name (str): Name of the clinic location.
         start_time_iso (str): The appointment start time in ISO 8601 format (e.g., 2024-12-29T10:00:00-04:00).
         service_type (str): A user-friendly description of the service.
 
