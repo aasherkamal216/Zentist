@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     REDIS_URL: str
 
     # --- Models Configuration ---
-    DEFAULT_MODEL: str = "llama-3.3-70b-versatile"
+    DEFAULT_MODEL: str = "groq/llama-3.3-70b-versatile"
     GROQ_API_KEY: str
 
     # --- Sendgrid Email ---
